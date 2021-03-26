@@ -48,6 +48,15 @@ JOIN genre ON genre.genre_id = track.genre_id
 WHERE genre.name = 'Alternative & Punk';
 
 
+-- Black Diamond
+SELECT track.name, genre.name, album.title, artist.name 
+FROM track
+JOIN album ON track.album_id = album.album_id
+JOIN artist ON album.artist_id = artist.artist_id
+JOIN genre ON track.genre_id = genre.genre_id
+JOIN playlist_track ON track.track_id = playlist_track.track_id
+JOIN playlist ON playlist_track.playlist_id = playlist.playlist_id
+WHERE playlist.name = 'Music';
 
 
 -- Pactice Nested Queries
@@ -184,3 +193,80 @@ DELETE FROM practice_delete
 WHERE value = 150;
 
 
+
+-- eCommerce Simulation
+
+CREATE TABLE user4 (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  email VARCHAR(255)
+);
+
+CREATE TABLE products2 (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  price INTEGER
+);
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  product_id INTEGER REFERENCES products2(id)
+);
+
+INSERT INTO user4 (name, email)
+VALUES 
+  ('Rich', 'rich@email.com'),
+  ('Val', 'val@email.com'),
+  ('Lilah', 'lilah@email.com');
+
+INSERT INTO products2 (name, price)
+VALUES  
+  ('hat', 25),
+  ('jacket', 90),
+  ('shirt', 55);
+
+INSERT INTO orders (product_id)
+VALUES 
+  (1), 
+  (2), 
+  (3);
+
+SELECT * FROM orders 
+WHERE id = 1;
+
+SELECT * from orders;
+
+SELECT SUM(price) FROM products2
+JOIN orders ON products2.id = orders.product_id
+WHERE orders.id = 1;
+
+ALTER TABLE orders 
+ADD COLUMN user_id INTEGER REFERENCES user4(id);
+
+UPDATE orders
+SET user_id = 1
+WHERE id = 1;
+
+UPDATE orders
+SET user_id = 2
+WHERE id = 2;
+
+UPDATE orders
+SET user_id = 3
+WHERE id = 3;
+
+SELECT * FROM orders
+JOIN user4 ON orders.user_id = user4.id
+WHERE user4.id = 1;
+
+SELECT user4.name, COUNT(*)
+FROM orders 
+JOIN user4 ON user4.id = orders.user_id
+GROUP BY user4.name;
+
+-- Black Diamond
+SELECT user4.name, COUNT(*), SUM(price)
+FROM orders 
+JOIN user4 ON user4.id = orders.user_id
+JOIN products2 ON products2.id = orders.product_id 
+GROUP BY user4.name;
